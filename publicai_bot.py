@@ -12,6 +12,7 @@ from aiohttp_socks import ProxyConnector
 from fake_useragent import FakeUserAgent
 from colorama import Fore, Style
 from dotenv import load_dotenv
+import traceback # <-- Added this line
 
 # Load environment variables from .env file
 load_dotenv()
@@ -138,8 +139,12 @@ class PublicAIBot:
             self.log(
                 f"{Fore.MAGENTA}[ Account: {Style.RESET_ALL}{Fore.WHITE}{account_email}{Style.RESET_ALL}"
                 f"{Fore.MAGENTA} | Proxy: {Style.RESET_ALL}{Fore.WHITE}{proxy_info}{Style.RESET_ALL}"
-                f"{Fore.MAGENTA} ] {Fore.RED}Error sending ping: {e}{Style.RESET_ALL}"
+                f"{Fore.MAGENTA} ] {Fore.RED}Error sending ping: {Style.RESET_ALL}"
             )
+            # Print the full traceback for detailed debugging
+            traceback.print_exc() # <-- Added this line for full error details
+            self.log(f"{Fore.MAGENTA}[ Account: {Style.RESET_ALL}{Fore.WHITE}{account_email}{Style.RESET_ALL} ] {Fore.CYAN}Waiting for 1 hour until next ping...{Style.RESET_ALL}")
+
 
     async def run_account(self, account_email, access_token, use_proxy, rotate_proxy):
         while True:
@@ -180,6 +185,7 @@ class PublicAIBot:
             self.log(f"{Fore.RED+Style.BRIGHT}[ EXIT ] PublicAI - BOT stopped by user.{Style.RESET_ALL}")
         except Exception as e:
             self.log(f"{Fore.RED+Style.BRIGHT}An unexpected error occurred: {e}{Style.RESET_ALL}")
+            traceback.print_exc() # Also print traceback for unexpected main errors
 
 if __name__ == "__main__":
     bot = PublicAIBot()
